@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Ryan's Birthday Trip</title>
+    <meta name="mobile-web-app-capable" content="yes">
+    <meta name="theme-color" content="#1e293b">
+    <link href="https://fonts.googleapis.com/css2?family=Microsoft+JhengHei:wght@400;700&family=Great+Vibes&display=swap" rel="stylesheet">
+    
+    <style>
+        /* --- 變數設定 (溫暖米色耶誕風) --- */
+        :root {
+            --midnight-blue: #1e293b;
+            --royal-blue: #1d4ed8;
+            --xmas-red: #d32f2f;
+            --gold: #d97706;
+            --silver: #e2e8f0;
+            --bg-warm: #fffbf2;
+            --text-warm: #433422;
+            --text-light: #786c5e;
+            --card-bg: #ffffff;
+            --card-shadow: 0 8px 20px rgba(67, 52, 34, 0.08);
+            --radius: 20px;
+        }
+
+        body {
+            font-family: "Microsoft JhengHei", "微軟正黑體", sans-serif;
+            background-color: var(--bg-warm);
+            color: var(--text-warm);
+            margin: 0;
+            padding-bottom: 60px;
+            -webkit-font-smoothing: antialiased;
+            /* 確保預設是可以滑動的 */
+            overflow-x: hidden; 
+            overflow-y: auto;
+        }
+
+        header {
+            background: linear-gradient(135deg, #0f172a 0%, #334155 100%);
+            padding: 40px 20px 90px;
+            text-align: center;
+            position: relative;
+            color: white;
+            border-bottom-left-radius: 40px;
+            border-bottom-right-radius: 40px;
+            overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        }
+
+        .stars {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(rgba(255,255,255,0.8) 1px, transparent 1px);
+            background-size: 40px 40px;
+            opacity: 0.3;
+            z-index: 0;
+        }
+
+        .illustration-wrapper {
+            position: relative;
+            width: 140px;
+            height: 140px;
+            margin: 0 auto 20px;
+            z-index: 2;
+        }
+
+        .family-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 50%;
+            border: 4px solid var(--gold);
+            box-shadow: 0 0 25px rgba(217, 119, 6, 0.6);
+        }
+
+        .santa-hat-icon {
+            position: absolute;
+            top: -15px; right: -10px;
+            font-size: 2.5rem;
+            transform: rotate(15deg);
+            filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
+        }
+
+        h1 {
+            margin: 0;
+            font-family: 'Great Vibes', cursive;
+            font-size: 2.5rem;
+            color: #fbbf24;
+            text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+            position: relative;
+            z-index: 2;
+        }
+
+        p.subtitle {
+            margin: 5px 0 0;
+            font-size: 0.95rem;
+            letter-spacing: 2px;
+            color: #cbd5e1;
+            text-transform: uppercase;
+            position: relative;
+            z-index: 2;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: -60px auto 0;
+            padding: 0 20px;
+            position: relative;
+            z-index: 10;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+            margin-bottom: 25px;
+        }
+
+        .widget-card {
+            background: var(--card-bg);
+            border-radius: var(--radius);
+            padding: 15px;
+            text-align: center;
+            box-shadow: var(--card-shadow);
+            border-top: 4px solid var(--xmas-red);
+        }
+
+        .widget-icon { font-size: 1.8rem; margin-bottom: 5px; display: block; }
+        .widget-label { font-size: 0.8rem; color: var(--text-light); font-weight: bold; text-transform: uppercase; }
+
+        .rate-group {
+            display: flex; align-items: baseline; justify-content: center; gap: 5px; margin-top: 5px;
+        }
+        .rate-input {
+            width: 80px; border: none; border-bottom: 2px solid var(--gold);
+            font-size: 1.2rem; text-align: center; font-weight: bold; color: var(--text-warm);
+            font-family: inherit;
+            background: transparent;
+        }
+        .rate-input:focus { outline: none; border-color: var(--xmas-red); }
+        .result-text { color: var(--xmas-red); font-weight: 700; font-size: 0.95rem; margin-top: 4px;}
+
+        .weather-btn {
+            background-color: var(--royal-blue); color: white; padding: 5px 12px;
+            border-radius: 20px; font-size: 0.75rem; text-decoration: none;
+            display: inline-block; margin-top: 5px;
+        }
+
+        /* --- Day Cards --- */
+        .day-card {
+            background: var(--card-bg); 
+            margin-bottom: 15px; border-radius: var(--radius);
+            box-shadow: var(--card-shadow); 
+            overflow: hidden; 
+            border: 1px solid rgba(255,255,255,0.8);
+        }
+
+        .day-header {
+            padding: 18px 20px; display: flex; justify-content: space-between; align-items: center;
+            cursor: pointer; background: var(--card-bg); border-bottom: 1px solid #f1f5f9;
+        }
+
+        .day-badge {
+            background: var(--midnight-blue); color: #fbbf24; padding: 6px 12px;
+            border-radius: 8px; font-weight: bold; font-size: 0.85rem;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        .day-title { margin-left: 12px; font-weight: 700; color: var(--text-warm); font-size: 1.05rem; }
+
+        .toggle-icon { color: var(--text-light); transition: transform 0.3s; }
+        .day-card.active .toggle-icon { transform: rotate(180deg); color: var(--xmas-red); }
+
+        .day-content {
+            max-height: 0; overflow: hidden; transition: max-height 0.4s ease; background-color: var(--card-bg);
+        }
+
+        .timeline { padding: 20px 20px 30px; position: relative; }
+
+        .timeline::before {
+            content: ''; position: absolute; left: 29px; top: 25px; bottom: 25px; width: 2px;
+            background: linear-gradient(to bottom, var(--silver), var(--gold), var(--silver));
+        }
+
+        .event { position: relative; padding-left: 50px; margin-bottom: 30px; }
+        .event:last-child { margin-bottom: 0; }
+
+        .event::after {
+            content: ''; position: absolute; left: 24px; top: 6px; width: 12px; height: 12px;
+            border-radius: 50%; background: var(--xmas-red); border: 2px solid white;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.15); z-index: 2;
+        }
+        .event:nth-child(even)::after { background: var(--gold); }
+
+        .time { font-size: 0.8rem; font-weight: 700; color: var(--text-light); margin-bottom: 2px; display: block; }
+        .activity { font-size: 1rem; color: var(--text-warm); line-height: 1.6; }
+        .highlight { color: var(--xmas-red); font-weight: bold; }
+
+        .info-btn {
+            display: inline-flex; align-items: center; background: #fffbeb; color: #92400e;
+            border: 1px solid #fcd34d; padding: 8px 15px; border-radius: 12px;
+            font-size: 0.9rem; font-weight: bold; text-decoration: none; margin-top: 8px;
+            cursor: pointer; transition: transform 0.2s; box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .info-btn:active { transform: scale(0.96); }
+        .info-btn::before { content: '📖'; margin-right: 6px; }
+
+        .link-btn {
+            display: inline-block; background: #f0f9ff; color: #0369a1; padding: 5px 10px;
+            border-radius: 8px; font-size: 0.8rem; text-decoration: none;
+            margin-right: 5px; border: 1px solid #bae6fd; margin-top: 5px;
+        }
+        
+        /* --- Modal --- */
+        .modal {
+            display: none;
+            position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%;
+            background-color: rgba(30, 41, 59, 0.9); /* 加深遮罩顏色 */
+            backdrop-filter: blur(5px);
+            align-items: center; justify-content: center;
+            padding: 20px; box-sizing: border-box;
+        }
+
+        .modal-content {
+            background-color: #fff; width: 100%; max-width: 500px; max-height: 85vh;
+            overflow-y: auto; border-radius: 20px; position: relative;
+            padding: 25px 20px; box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: slideUp 0.3s ease-out;
+        }
+
+        @keyframes slideUp {
+            from { transform: translateY(50px); opacity: 0; }
+            to { transform: translateY(0); opacity: 1; }
+        }
+
+        .close-btn {
+            position: absolute; top: 15px; right: 15px; width: 35px; height: 35px;
+            background: #f1f5f9; border-radius: 50%; display: flex;
+            align-items: center; justify-content: center; color: #64748b;
+            font-size: 1.5rem; cursor: pointer; z-index: 10;
+        }
+
+        .modal-title {
+            font-size: 1.2rem; color: var(--midnight-blue); font-weight: bold;
+            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 2px solid var(--gold);
+        }
+
+        /* 圖片樣式優化：不硬性拉大，防止模糊 */
+        .modal-img {
+            max-width: 100%;      /* 限制最大寬度為容器寬度 */
+            height: auto;         /* 高度自動 */
+            display: block;
+            margin: 10px auto 20px;
+            border-radius: 10px;
+            border: 2px solid #e2e8f0;
+            object-fit: contain;  /* 保持比例 */
+        }
+        
+        .step-list { padding-left: 20px; color: var(--text-warm); line-height: 1.6; }
+        .step-list li { margin-bottom: 8px; }
+
+        .map-link {
+            color: inherit; text-decoration: none; border-bottom: 1px dotted var(--gold);
+            transition: all 0.2s ease; display: inline-flex; align-items: center; gap: 3px;
+        }
+        .map-link::after { content: '📍'; font-size: 0.85em; opacity: 0.7; }
+        .map-link:hover { color: var(--xmas-red); border-bottom-color: var(--xmas-red); }
+
+        .hotel {
+            margin-top: 8px; background: #f8fafc; color: var(--royal-blue); padding: 10px;
+            border-radius: 10px; font-size: 0.9rem; display: flex; align-items: center; gap: 8px;
+            border-left: 4px solid var(--gold);
+        }
+        
+        .decor-bg {
+            position: absolute; right: 10px; bottom: 5px; font-size: 3rem;
+            opacity: 0.05; pointer-events: none; color: var(--text-light);
+        }
+    </style>
+</head>
+<body>
+
+<header>
+    <div class="stars"></div>
+    <div id="snow-container"></div>
+    <div class="illustration-wrapper">
+        <div class="santa-hat-icon">🎅</div>
+        <img src="family.jpg" alt="Happy Family" class="family-img" onerror="this.src='https://cdn-icons-png.flaticon.com/512/3233/3233499.png'">
+    </div>
+    <h1>Ryan's Birthday Trip</h1>
+    <p class="subtitle">Osaka Christmas Special</p>
+</header>
+
+<div class="container">
+    <div class="dashboard">
+        <div class="widget-card">
+            <span class="widget-icon">💴</span>
+            <span class="widget-label">匯率試算</span>
+            <div class="rate-group">
+                <input type="number" id="yen-input" class="rate-input" placeholder="¥" oninput="convertCurrency()">
+                <div id="twd-output" class="result-text">NT$ 0</div>
+            </div>
+            <input type="hidden" id="rate" value="0.21"> 
+        </div>
+        <div class="widget-card">
+            <span class="widget-icon">❄️</span>
+            <span class="widget-label">大阪氣溫</span>
+            <div style="font-size:1.1rem; font-weight:bold; color:#1e3a8a; margin:5px 0;">6°C - 12°C</div>
+            <a href="https://weathernews.jp/onebox/tenki/osaka/27100/" target="_blank" class="weather-btn">查看預報</a>
+        </div>
+    </div>
+
+    <div class="day-card active">
+        <div class="day-header" onclick="toggleDay(this)">
+            <div style="display:flex; align-items:center;">
+                <span class="day-badge">DAY 1•12/17</span>
+                <span class="day-title">啟程・機場接駁</span>
+            </div>
+            <span class="toggle-icon">▼</span>
+        </div>
+        <div class="day-content">
+            <div class="timeline">
+                <div class="event">
+                    <span class="time">15:30 / 15:50</span>
+                    <span class="activity">從新莊家裡出門 🏠</span>
+                </div>
+                <div class="event">
+                    <span class="time">15:55 / 16:10</span>
+                    <span class="activity">機場捷運 A3 站發車 🚅</span>
+                </div>
+                <div class="event">
+                    <span class="time">16:21 / 16:36</span>
+                    <span class="activity">抵達桃園機場 T1 (A12站) 🛫</span>
+                </div>
+                <div class="event">
+                    <span class="time">18:50</span>
+                    <span class="activity">桃園機場起飛 (TPE) <br>樂桃 MM028</span>
+                </div>
+                <div class="event">
+                    <span class="time">22:15</span>
+                    <span class="activity">
+                        抵達關西機場 T2
+                        <br>
+                        <div class="info-btn" onclick="openModal('modal-t2')">接駁與飯店路線圖 (點擊開啟)</div>
+                    </span>
+                </div>
+                <div class="event">
+                    <div class="hotel">🏨 入住：<a href="https://www.google.com/maps/search/?api=1&query=關西機場日航飯店" target="_blank" class="map-link">關西機場日航飯店</a></div>
+                </div>
+                <div class="event">
+                    <span class="time">FOOD</span>
+                    <span class="activity">Lawson / ZETTERIA / NaKa卯</span>
+                </div>
+                <div class="decor-bg">✈️</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <div class="day-header" onclick="toggleDay(this)">
+            <div style="display:flex; align-items:center;">
+                <span class="day-badge">DAY 2•12/18</span>
+                <span class="day-title">難波 & 光之饗宴</span>
+            </div>
+            <span class="toggle-icon">▼</span>
+        </div>
+        <div class="day-content">
+            <div class="timeline">
+                <div class="event">
+                    <span class="time">08:00</span>
+                    <span class="activity">起床整理 + 早餐</span>
+                </div>
+                <div class="event">
+                    <span class="time">TRANSPORT</span>
+                    <span class="activity">
+                        搭乘南海特急 (Rapit)
+                        <br>
+                        <div class="info-btn" onclick="openModal('modal-ticket')">購票教學與步驟 (點擊開啟)</div>
+                    </span>
+                </div>
+                <div class="event">
+                    <span class="time">SPOT</span>
+                    <span class="activity">
+                        <a href="https://www.google.com/maps/search/?api=1&query=難波八阪神社" target="_blank" class="map-link">難波八阪神社 (獅子殿)</a>
+                        <br><small>難波站32號出口，步行7分鐘</small>
+                    </span>
+                </div>
+                
+                <div class="event">
+                    <span class="time">SHOPPING</span>
+                    <span class="activity">
+                        <strong>難波商圈逛街 (順遊 3COINS)</strong>
+                        <ul style="padding-left:15px; margin:5px 0; font-size:0.9rem; color:var(--text-light);">
+                            <li style="margin-bottom:8px;">
+                                <a href="https://www.google.com/maps/search/?api=1&query=3COINS+plus+難波CITY" target="_blank" class="map-link">3COINS+plus 難波CITY本館</a> (B2)
+                                <br><small>距離南海電鐵最近，最大間</small>
+                            </li>
+                            <li style="margin-bottom:8px;">
+                                <a href="https://www.google.com/maps/search/?api=1&query=3COINS+難波Walk" target="_blank" class="map-link">3COINS 難波Walk地下街</a> (B1)
+                                <br><small>距離道頓堀最近</small>
+                            </li>
+                            <li>
+                                <a href="https://www.google.com/maps/search/?api=1&query=3COINS+plus+難波南南" target="_blank" class="map-link">3COINS+plus 難波南南地下街</a> (B1)
+                                <br><small>丸井OIOI、高島屋旁</small>
+                            </li>
+                        </ul>
+                    </span>
+                </div>
+
+                <div class="event">
+                    <span class="time">LUNCH</span>
+                    <span class="activity"><a href="https://www.google.com/maps/search/?api=1&query=吉次牛舌炭火燒+心齋橋店" target="_blank" class="map-link">吉次牛舌炭火燒 心齋橋店</a></span>
+                </div>
+                <div class="event">
+                    <div class="hotel">🏨 入住：<a href="https://www.google.com/maps/search/?api=1&query=北濱皇家花園Canvas酒店" target="_blank" class="map-link">北濱皇家花園Canvas酒店</a></div>
+                </div>
+                <div class="event">
+                    <span class="time">TEA TIME</span>
+                    <span class="activity">
+                        飯店周邊甜點：<br>
+                        🍰 <a href="https://www.google.com/maps/search/?api=1&query=五感+北浜本館" target="_blank" class="map-link">五感 北浜本館</a> (~19:00)<br>
+                        ☕ <a href="https://www.google.com/maps/search/?api=1&query=MOTO+COFFEE" target="_blank" class="map-link">MOTO COFFEE</a> (~18:00)<br>
+                        <small style="color:var(--text-light)">*推薦提拉米蘇、戶外河景座位</small>
+                    </span>
+                </div>
+                <div class="event">
+                    <span class="time">EVENING</span>
+                    <span class="activity">
+                        <a href="https://www.google.com/maps/search/?api=1&query=中之島光之饗宴" target="_blank" class="map-link"><span class="highlight">中之島光之饗宴</span></a>
+                    </span>
+                </div>
+                <div class="decor-bg">🎄</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <div class="day-header" onclick="toggleDay(this)">
+            <div style="display:flex; align-items:center;">
+                <span class="day-badge">DAY 3•12/19</span>
+                <span class="day-title">親子樂園 & Outlet</span>
+            </div>
+            <span class="toggle-icon">▼</span>
+        </div>
+        <div class="day-content">
+            <div class="timeline">
+                <div class="event">
+                    <span class="time">MORNING</span>
+                    <span class="activity">
+                        <a href="https://www.google.com/maps/search/?api=1&query=大阪兒童樂園" target="_blank" class="map-link">大阪兒童樂園 (Kids Plaza)</a>
+                        <ul style="padding-left:15px; margin:5px 0; font-size:0.9rem; color:var(--text-light);">
+                            <li>🚇 堺筋線「扇町站」2號出口即到</li>
+                            <li>🚇 JR大阪環狀線「天滿站」西口步行3分</li>
+                            <li>⏰ 9:30 ~ 16:30</li>
+                            <li>💰 大人 1400円 (Q比免費)</li>
+                            <li>🛅 1F/3F/4F 有免費置物櫃 (退幣式)</li>
+                        </ul>
+                        <div style="margin-top:8px;">
+                            <a href="https://www.kidsplaza.or.jp/" target="_blank" class="link-btn">🌐 官網</a>
+                            <a href="https://bobowin.blog/kids-plaza-osaka/" target="_blank" class="link-btn">📖 遊記1</a>
+                            <a href="https://mimigo.tw/kids-plaza-osaka/" target="_blank" class="link-btn">📖 遊記2</a>
+                        </div>
+                    </span>
+                </div>
+                <div class="event">
+                    <span class="time">LUNCH</span>
+                    <span class="activity">
+                        <a href="https://www.google.com/maps/search/?api=1&query=天神橋筋商店街" target="_blank" class="map-link">天神橋筋商店街</a><br>
+                        必吃推薦：<br>
+                        1. <a href="https://www.google.com/maps/search/?api=1&query=中村屋+可樂餅" target="_blank" class="map-link">中村屋可樂餅</a><br>
+                        2. <a href="https://www.google.com/maps/search/?api=1&query=宇奈とと+大阪天満宮店" target="_blank" class="map-link">宇奈とと (鰻魚飯)</a>
+                    </span>
+                </div>
+                <div class="event">
+                    <span class="time">AFTERNOON</span>
+                    <span class="activity">
+                        <a href="https://www.google.com/maps/search/?api=1&query=臨空城+Outlet" target="_blank" class="map-link">臨空城 Outlet / SEACLE</a>
+                    </span>
+                </div>
+                <div class="event">
+                    <div class="hotel">🏨 入住：<a href="https://www.google.com/maps/search/?api=1&query=OMO+Kansai+Airport" target="_blank" class="map-link">OMO 關西機場 by 星野</a></div>
+                </div>
+                <div class="decor-bg">🎁</div>
+            </div>
+        </div>
+    </div>
+
+    <div class="day-card">
+        <div class="day-header" onclick="toggleDay(this)">
+            <div style="display:flex; align-items:center;">
+                <span class="day-badge">DAY 4•12/20</span>
+                <span class="day-title">平安返家</span>
+            </div>
+            <span class="toggle-icon">▼</span>
+        </div>
+        <div class="day-content">
+            <div class="timeline">
+                <div class="event">
+                    <span class="time">05:00</span>
+                    <span class="activity">接駁車至 T2</span>
+                </div>
+                <div class="event">
+                    <span class="time">07:15</span>
+                    <span class="activity">關西機場起飛 (MM23)</span>
+                </div>
+                <div class="event">
+                    <span class="time">09:45</span>
+                    <span class="activity">抵達桃園機場 T1</span>
+                </div>
+                <div class="event">
+                    <span class="time">10:28 / 10:43</span>
+                    <span class="activity">機場捷運 T1 (A12站) 發車 🚅</span>
+                </div>
+                <div class="event">
+                    <span class="time">10:54 / 11:09</span>
+                    <span class="activity">抵達 A3 站 🏠</span>
+                </div>
+                <div class="decor-bg">🦌</div>
+            </div>
+        </div>
+    </div>
+
+</div>
+
+<div id="modal-t2" class="modal" onclick="closeModalBackground(event)">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <div class="modal-title">T2 往 T1 & 飯店路線</div>
+        
+        <p>1. 抵達 T2 後，尋找「無料連絡巴士」指標。</p>
+        <img src="img/3.jpg" alt="T2 map" class="modal-img">
+        
+        <p>2. 搭乘接駁車抵達 T1 後，跟著指標走。</p>
+        <img src="img/4.jpg" alt="T1 sign" class="modal-img">
+        
+        <p>3. 約 8 分鐘，上空橋搭手扶梯，即可看到飯店入口。</p>
+        <img src="img/5.jpg" alt="Hotel entrance" class="modal-img">
+    </div>
+</div>
+
+<div id="modal-ticket" class="modal" onclick="closeModalBackground(event)">
+    <div class="modal-content">
+        <span class="close-btn" onclick="closeModal()">×</span>
+        <div class="modal-title">南海特急購票教學</div>
+        
+        <div class="instruction-box">
+            <p style="color:#c62828; font-weight:bold;">💡 推薦影片：<a href="https://www.youtube.com/watch?v=RzZaRmrwBeM" target="_blank">商務艙購買方法</a></p>
+            
+            <ol class="step-list">
+                <li>操作介面先切換成「中文」。
+                    <img src="img/12.jpg" class="modal-img">
+                </li>
+                <li>點選「購買特急券」。
+                    <img src="img/13.jpg" class="modal-img">
+                </li>
+                <li>選擇「機場線」。
+                    <img src="img/14.jpg" class="modal-img">
+                </li>
+                <li>選擇目的地「難波」。
+                    <img src="img/15.jpg" class="modal-img">
+                </li>
+                <li>選擇班次。
+                    <img src="img/16.jpg" class="modal-img">
+                </li>
+                <li>選擇人數 (大人*2)，選 5號或6號車廂商務座。
+                    <img src="img/18.jpg" class="modal-img">
+                </li>
+                <li>付款時選「KANKU TOKUWARI」優惠票 (含乘車券+特急券)。
+                    <img src="img/20.jpg" class="modal-img">
+                    <small style="color:#64748b;">*若選僅特急券，需另用 IC卡進站。</small>
+                </li>
+                <li>選擇付款方式 (現金/IC卡)。
+                    <img src="img/22.jpg" class="modal-img">
+                </li>
+                <li>認明入口與藍色火車。
+                    <img src="img/23.jpg" class="modal-img">
+                    <img src="img/24.jpg" class="modal-img">
+                </li>
+            </ol>
+        </div>
+    </div>
+</div>
+
+<script>
+    // 開啟視窗：鎖定背景
+    function openModal(id) {
+        document.getElementById(id).style.display = 'flex';
+        document.body.style.overflow = 'hidden'; 
+    }
+
+    // 關閉視窗 (主要函數)：恢復滑動
+    function closeModal() {
+        document.querySelectorAll('.modal').forEach(m => m.style.display = 'none');
+        document.body.style.overflow = ''; // 重要：清空 style 屬性，讓 CSS 恢復控制
+    }
+
+    // 判斷點擊是否為背景
+    function closeModalBackground(event) {
+        if (event.target.classList.contains('modal')) {
+            closeModal();
+        }
+    }
+
+    function createSnow() {
+        const container = document.getElementById('snow-container');
+        container.style.position = 'absolute';
+        container.style.top = '0'; container.style.left = '0';
+        container.style.width = '100%'; container.style.height = '100%';
+        container.style.pointerEvents = 'none';
+
+        for(let i=0; i<20; i++) {
+            let snow = document.createElement('div');
+            snow.innerHTML = '❄';
+            snow.style.position = 'absolute';
+            snow.style.color = 'rgba(255, 255, 255, 0.4)';
+            snow.style.left = Math.random() * 100 + '%';
+            snow.style.top = Math.random() * -100 + 'px';
+            snow.style.fontSize = (Math.random() * 10 + 10) + 'px';
+            snow.style.animation = `fall ${Math.random() * 3 + 4}s linear infinite`;
+            snow.style.animationDelay = Math.random() * 5 + 's';
+            container.appendChild(snow);
+        }
+    }
+    
+    const styleSheet = document.createElement("style");
+    styleSheet.innerText = `@keyframes fall { to { transform: translateY(300px); opacity: 0; } }`;
+    document.head.appendChild(styleSheet);
+    
+    createSnow();
+
+    function convertCurrency() {
+        const yen = document.getElementById('yen-input').value;
+        const rate = document.getElementById('rate').value;
+        const result = document.getElementById('twd-output');
+        if(yen) {
+            result.innerText = "NT$ " + Math.round(yen * rate).toLocaleString();
+        } else {
+            result.innerText = "NT$ 0";
+        }
+    }
+
+    function toggleDay(header) {
+        const card = header.parentElement;
+        const content = card.querySelector('.day-content');
+        const isActive = card.classList.contains('active');
+        
+        document.querySelectorAll('.day-card').forEach(c => {
+            if(c !== card) {
+                c.classList.remove('active');
+                c.querySelector('.day-content').style.maxHeight = null;
+            }
+        });
+
+        if (!isActive) {
+            card.classList.add('active');
+            content.style.maxHeight = content.scrollHeight + "px";
+        } else {
+            card.classList.remove('active');
+            content.style.maxHeight = null;
+        }
+    }
+</script>
+
+</body>
+</html>
